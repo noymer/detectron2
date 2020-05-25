@@ -332,8 +332,10 @@ class Visualizer:
         Returns:
             output (VisImage): image object with visualizations.
         """
-        boxes = predictions.pred_boxes if predictions.has("pred_boxes") else None
-        scores = predictions.scores if predictions.has("scores") else None
+        # boxes = predictions.pred_boxes if predictions.has("pred_boxes") else None
+        boxes = None
+        # scores = predictions.scores if predictions.has("scores") else None
+        scores = None
         classes = predictions.pred_classes if predictions.has("pred_classes") else None
         labels = _create_text_labels(classes, scores, self.metadata.get("thing_classes", None))
         keypoints = predictions.pred_keypoints if predictions.has("pred_keypoints") else None
@@ -610,6 +612,9 @@ class Visualizer:
                     text_pos = (x0, y0)  # if drawing boxes, put text on the box corner.
                     horiz_align = "left"
                 elif masks is not None:
+                    polygons = masks[i].polygons
+                    if polygons is None or len(polygons) == 0:
+                        continue
                     x0, y0, x1, y1 = masks[i].bbox()
 
                     # draw text in the center (defined by median) when box is not drawn
@@ -636,6 +641,7 @@ class Visualizer:
                     * 0.5
                     * self._default_font_size
                 )
+                font_size = self._default_font_size * 0.7
                 self.draw_text(
                     labels[i],
                     text_pos,
@@ -790,7 +796,7 @@ class Visualizer:
             text,
             size=font_size * self.output.scale,
             family="sans-serif",
-            bbox={"facecolor": "black", "alpha": 0.8, "pad": 0.7, "edgecolor": "none"},
+            # bbox={"facecolor": "black", "alpha": 0.8, "pad": 0.7, "edgecolor": "none"},
             verticalalignment="top",
             horizontalalignment=horizontal_alignment,
             color=color,

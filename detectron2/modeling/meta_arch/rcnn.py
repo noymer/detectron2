@@ -7,6 +7,7 @@ from torch import nn
 from detectron2.structures import ImageList
 from detectron2.utils.events import get_event_storage
 from detectron2.utils.logger import log_first_n
+from detectron2.utils.time_measurement import Timer 
 
 from ..backbone import build_backbone
 from ..postprocessing import detector_postprocess
@@ -158,6 +159,8 @@ class GeneralizedRCNN(nn.Module):
         assert not self.training
 
         images = self.preprocess_image(batched_inputs)
+        timer = Timer()
+        timer.start()
         features = self.backbone(images.tensor)
 
         if detected_instances is None:
@@ -173,9 +176,11 @@ class GeneralizedRCNN(nn.Module):
             results = self.roi_heads.forward_with_given_boxes(features, detected_instances)
 
         if do_postprocess:
-            return GeneralizedRCNN._postprocess(results, batched_inputs, images.image_sizes)
-        else:
-            return results
+            results = GeneralizedRCNN._postprocess(results, batched_inputs, images.image_sizes)
+
+        timer.stop()
+        timer.save()
+        return results 
 
     def preprocess_image(self, batched_inputs):
         """
