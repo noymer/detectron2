@@ -51,6 +51,10 @@ def get_parser():
         help="A file or directory to save output visualizations. "
         "If not given, will show output in an OpenCV window.",
     )
+    parser.add_argument(
+        "--label",
+        help="A label to limit visualization. The other labels are not shown in output."
+    )
 
     parser.add_argument(
         "--confidence-threshold",
@@ -86,7 +90,7 @@ if __name__ == "__main__":
             # use PIL, to be consistent with evaluation
             img = read_image(path, format="BGR")
             start_time = time.time()
-            predictions, visualized_output = demo.run_on_image(img)
+            predictions, visualized_output = demo.run_on_image(img, args.label)
             logger.info(
                 "{}: {} in {:.2f}s".format(
                     path,

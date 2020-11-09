@@ -34,7 +34,7 @@ class VisualizationDemo(object):
         else:
             self.predictor = DefaultPredictor(cfg)
 
-    def run_on_image(self, image):
+    def run_on_image(self, image, label = None):
         """
         Args:
             image (np.ndarray): an image of shape (H, W, C) (in BGR order).
@@ -61,7 +61,7 @@ class VisualizationDemo(object):
                 )
             if "instances" in predictions:
                 instances = predictions["instances"].to(self.cpu_device)
-                vis_output = visualizer.draw_instance_predictions(predictions=instances)
+                vis_output = visualizer.draw_instance_predictions(predictions=instances, selected_label = label)
 
         return predictions, vis_output
 

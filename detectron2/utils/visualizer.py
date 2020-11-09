@@ -320,7 +320,7 @@ class Visualizer:
         )
         self._instance_mode = instance_mode
 
-    def draw_instance_predictions(self, predictions):
+    def draw_instance_predictions(self, predictions, selected_label = None):
         """
         Draw instance-level prediction results on an image.
 
@@ -365,9 +365,10 @@ class Visualizer:
         # for car only        
         new_masks = []
         for i, label in enumerate(labels):
-            if label == 'car':
+            if label == selected_label:
                 new_masks.append(masks[i])
 
+        # these codes are from SOLO: https://github.com/WXinlong/SOLO/blob/0b0dfb343dc976f88352bb1294567c77586b9065/mmdet/apis/inference.py#L261-L265
         np.random.seed(42)
         color_masks = [
             tuple(map(tuple, np.random.randint(0, 256, (1,3), dtype=np.uint8) / 255))[0]
