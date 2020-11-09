@@ -362,10 +362,22 @@ class Visualizer:
             )
             alpha = 0.3
 
+        # for car only        
+        new_masks = []
+        for i, label in enumerate(labels):
+            if label == 'car':
+                new_masks.append(masks[i])
+
+        np.random.seed(42)
+        color_masks = [
+            tuple(map(tuple, np.random.randint(0, 256, (1,3), dtype=np.uint8) / 255))[0]
+            for _ in range(len(new_masks))
+        ]
+
         self.overlay_instances(
-            masks=masks,
+            masks=new_masks,
             boxes=boxes,
-            labels=labels,
+            labels=None,
             keypoints=keypoints,
             assigned_colors=colors,
             alpha=alpha,
@@ -1027,7 +1039,8 @@ class Visualizer:
             segment,
             fill=True,
             facecolor=mplc.to_rgb(color) + (alpha,),
-            edgecolor=edge_color,
+            # edgecolor=edge_color,
+            edgecolor=None,
             linewidth=max(self._default_font_size // 15 * self.output.scale, 1),
         )
         self.output.ax.add_patch(polygon)
